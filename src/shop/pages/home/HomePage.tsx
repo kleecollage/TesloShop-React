@@ -1,7 +1,9 @@
-import React from 'react'
+import { CustomJumbotron } from "@/shop/components/CustomJumbotron"
 
 export const HomePage = () => {
   return (
-    <div>HomePage</div>
+    <>
+      <CustomJumbotron title={'All Our Products'} subTitle={''} />
+    </>
   )
 }
