@@ -11,6 +11,7 @@ export const CustomHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const { gender } = useParams();
+  console.log(gender)
   const inputRef = useRef<HTMLInputElement>(null)
   const query = searchParams.get('query') || ''
 
