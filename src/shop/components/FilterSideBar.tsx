@@ -12,16 +12,16 @@ export const FilterSidebar = () => {
     { id: "xl", label: "XL" },
     { id: "xxl", label: "XXL" },
   ];
-  
+
   return (
     <div className="w-64 space-y-6">
       <div>
-        <h3 className="font-semibold text-lg mb-4">Filtros</h3>
+        <h3 className="font-semibold text-lg mb-4">Filters</h3>
       </div>
 
       {/* Sizes */}
       <div className="space-y-4">
-        <h4 className="font-medium">Tallas</h4>
+        <h4 className="font-medium">Sizes</h4>
         <div className="grid grid-cols-3 gap-2">
           {sizes.map((size) => (
             <Button
@@ -40,11 +40,11 @@ export const FilterSidebar = () => {
 
       {/* Price Range */}
       <div className="space-y-4">
-        <h4 className="font-medium">Precio</h4>
+        <h4 className="font-medium">Price</h4>
         <RadioGroup defaultValue="" className="space-y-3">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="any" id="priceAny" />
-            <Label htmlFor="priceAny" className="text-sm cursor-pointer">Cualquier precio</Label>
+            <Label htmlFor="priceAny" className="text-sm cursor-pointer">Any Price</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="0-50" id="price1" />
@@ -67,5 +67,3 @@ export const FilterSidebar = () => {
     </div>
   );
 };
-
-export default FilterSidebar;
