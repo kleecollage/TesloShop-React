@@ -1,3 +1,5 @@
+import { CustomLogo } from "@/components/custom/CustomLogo";
+
 const currentYear = new Date().getFullYear();
 
 export const CustomFooter = () => {
@@ -6,7 +8,7 @@ export const CustomFooter = () => {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-semibold mb-4">TESLA STYLE</h3>
+            <CustomLogo />
             <p className="text-sm text-muted-foreground">
               Clothes inspired on the minimalist design and innovation of Tesla.
             </p>
