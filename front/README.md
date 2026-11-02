@@ -1,4 +1,24 @@
-# React + TypeScript + Vite
+# TesloShop
+
+## Backend
+
+1. Clonar el repositorio
+2. Copiar el contenido de la rama Feat-BackNest en otra carpeta
+3. Renombrar el archivo `.env.template` a `.env`
+4. Ejecutar `npm install` para instalar las dependencias
+5. Ejecutar `npm run dev` para iniciar el servidor de desarrollo
+6. Ejecutar el comando `docker-compose up -d` para incializar el contenedor
+7. Desde postman plantar el seed con la ruta GET /api/seed
+
+## Frontend
+
+1. Clonar el repositorio
+2. Renombrar el archivo `.env.template` a `.env`
+3. Ejecutar `npm install` para instalar las dependencias
+4. Verificar que el backend esta corriendo en el 3000
+5. Ejecutar `npm run dev` para iniciar el servidor de desarrollo
+
+### React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
