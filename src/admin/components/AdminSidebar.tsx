@@ -9,7 +9,6 @@ interface SidebarProps {
 
 export const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const { pathname } = useLocation();
-  console.log(pathname)
 
   const menuItems = [
     { icon: Home, label: 'Dashboard', active: true },
@@ -22,10 +21,7 @@ export const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) 
     { icon: HelpCircle, label: 'Help' },
   ];
 
-  console.log(pathname)
-
   const isActiveRoute = (to: string) => {
-    // TODO: Adjust when we were on the product screen
     if (pathname.includes('/admin/products') && to === '/admin/products') return true;
     return pathname === to; // true, false
   }
