@@ -1,4 +1,5 @@
 import ActivityFeed from "@/admin/components/ActivityFeed";
+import { AdminHeader } from "@/admin/components/AdminHeader";
 import { AdminTitle } from "@/admin/components/AdminTitle";
 import { CustomChart } from "@/admin/components/CustomChart";
 import { CustomStatCard } from "@/admin/components/CustomStatCard";
@@ -57,15 +58,14 @@ export const DashboardPage = () => {
 
   return (
     <>
+      <AdminHeader />
       <AdminTitle title="Dashboard" subTitle="Here's what's happening with your business today." />
       {/* Stats Grid */}
       < div className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" >
       {
-      stats.map((stat, index) => (
-        <CustomStatCard key={index} {...stat} />
-      ))
+        stats.map((stat, index) => <CustomStatCard key={index} {...stat} />)
       }
-            </div >
+      </div >
 
       {/* Charts and Activity Section */ }
       < div className = "grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8" >
