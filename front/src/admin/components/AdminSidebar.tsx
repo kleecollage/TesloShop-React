@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/auth/store/auth.store';
 import { CustomLogo } from '@/components/custom/CustomLogo';
 import { BarChart3, Bell, ChevronLeft, ChevronRight, FileText, HelpCircle, Home, Settings, ShoppingCart, Users } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
@@ -9,6 +10,8 @@ interface SidebarProps {
 
 export const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const { pathname } = useLocation();
+  const { user } = useAuthStore();
+  console.log(user)
 
   const menuItems = [
     { icon: Home, label: 'Dashboard', active: true },
@@ -77,8 +80,17 @@ export const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) 
               JD
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">John Doe</p>
-              <p className="text-xs text-gray-500 truncate">john@company.com</p>
+              {
+                user
+                  ? <>
+                      <p className="text-sm font-medium text-gray-900 truncate">{user.fullName}</p>
+                      <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    </>
+                  : <>
+                      <p className="text-sm font-medium text-gray-900 truncate">{'John Doe'}</p>
+                      <p className="text-xs text-gray-500 truncate">{'j.doe@mail.com'}</p>
+                    </>
+              }
             </div>
           </div>
         </div>

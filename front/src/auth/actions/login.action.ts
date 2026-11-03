@@ -4,7 +4,7 @@ import type { AuthResponse } from "@/auth/interfaces/auth.response";
 export const loginAction = async (email: string, password: string): Promise<AuthResponse> => {
   try {
     const { data } = await tesloApi.post<AuthResponse>('/auth/login', { email, password });
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error: any) {
     console.log(error);
