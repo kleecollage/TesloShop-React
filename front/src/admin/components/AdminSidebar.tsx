@@ -11,7 +11,6 @@ interface SidebarProps {
 export const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const { pathname } = useLocation();
   const { user } = useAuthStore();
-  console.log(user)
 
   const menuItems = [
     { icon: Home, label: 'Dashboard', active: true },
