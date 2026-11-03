@@ -1,3 +1,4 @@
+import { checkoutAuthAction } from '@/auth/actions/check-auth.actions';
 import { loginAction } from '@/auth/actions/login.action';
 import type { User } from '@/interfaces/user.interace';
 import { toast } from 'sonner';
@@ -12,19 +13,26 @@ type AuthState = {
   token: string | null;
 
   // Getters
-  isAdmin: boolean;
+  isAdmin: () => boolean;
 
   // Actions
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  checkAuthStatus: () => Promise<boolean>;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   // Implementar el store
   user: null,
   token: null,
-  authStatus: 'checking',
-  isAdmin: false,
+  authStatus: 'checking' as AuthStatus,
+
+  // Getters
+  isAdmin: () => {
+    const roles = get().user?.roles || [];
+    return roles.includes('admin');
+    // return !!get().user?.roles.includes('admin');
+  },
 
   // Actions
   login: async (email: string, password: string) => {
@@ -32,14 +40,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const data = await loginAction(email, password);
       localStorage.setItem('token', data.token);
-      set({ user: data.user, token: data.token });
-      if (data.user.roles.map((r) => r === 'admin'))
-        set({isAdmin: true})
+      set({ user: data.user, token: data.token, authStatus: 'authenticated' });
 
       return true;
     } catch (error) {
       localStorage.removeItem('token');
-      set({ user: null, token: null, isAdmin: false });
+      set({ user: null, token: null, authStatus:'not-authenticated'});
       toast.error('error', error);
 
       return false;
@@ -48,6 +54,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     localStorage.removeItem('token');
-    set({ user: null, token: null, isAdmin: false });
+    set({ user: null, token: null, authStatus:'not-authenticated'});
+  },
+
+  checkAuthStatus: async () => {
+    try {
+      const { user, token } = await checkoutAuthAction();
+      set({user: user, token: token, authStatus:'authenticated'});
+      return true;
+    } catch (error) {
+      console.log(error)
+      set({ user: null, token: null, authStatus:'not-authenticated'});
+    }
+    return false;
   }
 }))
