@@ -25,7 +25,7 @@ export const RegisterPage = () => {
     const formData = new FormData(event.target as HTMLFormElement);
 
     const password1 = formData.get('password') as string;
-    const password2 = formData.get('confirmPasssword') as string;
+    const password2 = formData.get('confirmPassword') as string;
 
     if (!passwordsMatch(password1, password2)) {
       setIsPosting(false);
@@ -70,7 +70,7 @@ export const RegisterPage = () => {
                 <div className="flex items-center">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
                 </div>
-                <Input id="confirmPassword" type="password" name="confirmPasssword" required placeholder="confirm your asssword" />
+                <Input id="confirmPassword" type="password" name="confirmPassword" required placeholder="confirm your asssword" />
               </div>
               <Button type="submit" className="w-full" disabled={isPosting}>
                 {isPosting ? 'Register...' : 'Register'}

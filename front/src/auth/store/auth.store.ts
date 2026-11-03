@@ -38,7 +38,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   // Actions
   register: async (fullName: string, email: string, password: string) => {
-    console.log({ fullName, email, password });
     try {
       await registerAction(fullName, email, password);
       return await get().login(email, password );
