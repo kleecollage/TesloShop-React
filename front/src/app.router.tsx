@@ -41,7 +41,7 @@ export const appRouter = createBrowserRouter ([
     element:
       <NotAuthenticatedRoute>
         <AuthLayout />
-      </NotAuthenticatedRoute> ,
+      </NotAuthenticatedRoute>,
     children: [
       {
         index: true,
@@ -63,8 +63,8 @@ export const appRouter = createBrowserRouter ([
     path: '/admin',
     element:
       <AdminRoute>
-        <AdminLayout />,
-      </AdminRoute> ,
+        <AdminLayout />
+      </AdminRoute>,
     children: [
       {
         index: true,
