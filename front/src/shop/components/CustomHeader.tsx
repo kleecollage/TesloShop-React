@@ -10,7 +10,7 @@ import { useAuthStore } from "@/auth/store/auth.store";
 
 export const CustomHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { user, logout } = useAuthStore();
+  const { user, authStatus, logout, isAdmin } = useAuthStore();
 
   const { gender } = useParams();
   const inputRef = useRef<HTMLInputElement>(null)
@@ -83,27 +83,25 @@ export const CustomHeader = () => {
               </div>
             </div>
 
-            {
-              !user
+            { authStatus === 'not-authenticated'
                 ? <Link to={'auth/login'}>
                     <Button size="sm" className='ml-2'>Login</Button>
                   </Link>
                 : <Link to='/auth/login'>
-                <Button variant="outline" size="sm" className="px-5 py-3">Logout</Button>
-              </Link>
+                    <Button variant="outline" size="sm" className="px-5 py-3">Logout</Button>
+                  </Link>
+            }
+
+            {
+              isAdmin &&
+                <Link to='/admin'>
+                  <Button variant="destructive" size="sm" className="px-5 py-3">Admin</Button>
+                </Link>
             }
 
             <Button variant="ghost" size="icon" className="md:hidden" onClick={logout}>
               <Search className="h-5 w-5" />
             </Button>
-
-            {
-              user && user.roles.map((r) => r === 'admin')
-                ? <Link to='/admin'>
-                    <Button variant="destructive" size="sm" className="px-5 py-3">Admin</Button>
-                  </Link>
-                : <span></span>
-            }
 
           </div>
         </div>
