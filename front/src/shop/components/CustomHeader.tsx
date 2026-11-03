@@ -1,16 +1,16 @@
-import { useRef, type KeyboardEvent } from "react";
-import { Link, useParams, useSearchParams } from "react-router";
 import { cn } from "cn";
 import { Search } from "lucide-react";
+import { useRef, type KeyboardEvent } from "react";
+import { Link, useParams, useSearchParams } from "react-router";
 
+import { useAuthStore } from "@/auth/store/auth.store";
 import { CustomLogo } from "@/components/custom/CustomLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuthStore } from "@/auth/store/auth.store";
 
 export const CustomHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { user, authStatus, logout, isAdmin } = useAuthStore();
+  const { authStatus, logout, isAdmin } = useAuthStore();
 
   const { gender } = useParams();
   const inputRef = useRef<HTMLInputElement>(null)
@@ -88,20 +88,18 @@ export const CustomHeader = () => {
                     <Button size="sm" className='ml-2'>Login</Button>
                   </Link>
                 : <Link to='/auth/login'>
-                    <Button variant="outline" size="sm" className="px-5 py-3">Logout</Button>
+                    <Button variant="outline" size="sm" className="px-5 py-3" onClick={logout}>
+                      Logout
+                    </Button>
                   </Link>
             }
 
             {
-              isAdmin &&
+              isAdmin() &&
                 <Link to='/admin'>
                   <Button variant="destructive" size="sm" className="px-5 py-3">Admin</Button>
                 </Link>
             }
-
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={logout}>
-              <Search className="h-5 w-5" />
-            </Button>
 
           </div>
         </div>
