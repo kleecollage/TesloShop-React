@@ -1,5 +1,4 @@
 import ActivityFeed from "@/admin/components/ActivityFeed";
-import { AdminHeader } from "@/admin/components/AdminHeader";
 import { AdminTitle } from "@/admin/components/AdminTitle";
 import { CustomChart } from "@/admin/components/CustomChart";
 import { CustomStatCard } from "@/admin/components/CustomStatCard";
@@ -58,7 +57,6 @@ export const DashboardPage = () => {
 
   return (
     <>
-      <AdminHeader />
       <AdminTitle title="Dashboard" subTitle="Here's what's happening with your business today." />
       {/* Stats Grid */}
       < div className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" >

@@ -1,3 +1,4 @@
+import { AdminHeader } from "@/admin/components/AdminHeader";
 import { AdminSidebar } from "@/admin/components/AdminSidebar";
 import { useState } from "react";
 import { Outlet } from "react-router";
@@ -13,6 +14,7 @@ const AdminLayout = () => {
       />
 
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 p-6">
           <Outlet />
         </main>
