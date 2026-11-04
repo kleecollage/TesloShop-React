@@ -7,7 +7,7 @@ interface ProductCardProps {
   name: string;
   price: number;
   image: string;
-  category: Gender[];
+  category: Gender;
   sizes: Size[];
 }
 
