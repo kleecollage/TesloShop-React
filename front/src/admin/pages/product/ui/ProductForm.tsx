@@ -1,15 +1,18 @@
 import { AdminTitle } from "@/admin/components/AdminTitle";
+import { SideBarProduct } from "@/admin/pages/product/components/SideBarProduct";
+import { productSchema, type ProductFormValues } from "@/admin/pages/product/ui/product.schema";
+import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import type { Product, Size } from "@/interfaces/product.interface";
-import { Plus, SaveAll, Tag, Upload, X } from "lucide-react";
-import { useRef, useState, type RefObject } from "react";
-import { Link } from "react-router";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-// import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "cn";
+import { Plus, SaveAll, Tag, X } from "lucide-react";
+import { useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Link } from "react-router";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   title: string;
@@ -23,22 +26,32 @@ interface Props {
 
 const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
-export const ProductForm = ({ title, subTitle, product, isPosting, onSubmit }: Props) => {
-  const labelInputRef = useRef<HTMLInputElement>(null)
-  const [dragActive, setDragActive] = useState(false);
+const GENDER_VALUES = [
+  { label: "Select a fruit", value: null },
+  { label: "Men", value: "men" },
+  { label: "Women", value: "women" },
+  { label: "Kid", value: "kid" },
+  { label: "Unisex", value: "unisex" }
+]
 
+export const ProductForm = ({ title, subTitle, product, isPosting, onSubmit }: Props) => {
   const {
+    control,
     register,
     handleSubmit,
     getValues,
     setValue,
     watch,
-    formState: {errors}
-  } = useForm({defaultValues: product})
+    formState: { errors },
+  } = useForm<ProductFormValues>({
+    resolver: zodResolver(productSchema),
+    defaultValues: product,
+  });
+
+  const labelInputRef = useRef<HTMLInputElement>(null)
 
   const selectedSizes = watch('sizes');
   const selectedTags = watch('tags');
-  const currentStock = watch('stock');
 
   const addTag = () => {
     const newTag = labelInputRef.current!.value;
@@ -66,25 +79,6 @@ export const ProductForm = ({ title, subTitle, product, isPosting, onSubmit }: P
     setValue('sizes', Array.from(sizeSet))
   };
 
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
-    else if (e.type === 'dragleave') setDragActive(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    const files = e.dataTransfer.files;
-    console.log(files);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    console.log(files);
-  };
 
   return (
   <form onSubmit={handleSubmit(onSubmit)}>
@@ -116,123 +110,128 @@ export const ProductForm = ({ title, subTitle, product, isPosting, onSubmit }: P
             </h2>
 
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Product Title
-                </label>
-                <input
-                  type="text"
-                  {...register('title', {
-                    required: true
-                  })}
-                  className={cn(
-                    "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
-                    {'border-red-700' : errors.title}
-                  )}
-                  placeholder="Product Title"
-                />
-                {errors.title && <p className="text-red-700 text-sm">Title is required</p>}
-              </div>
+              <Controller
+                name="title"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="title">Product Title</FieldLabel>
+                    <Input {...field} id="title" aria-invalid={fieldState.invalid} />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Price ($)
-                  </label>
-                  <input
-                    type="number"
-                    {...register('price', {
-                      required: true,
-                      min: 1
-                    })}
-                    className={cn(
-                      "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
-                      {'border-red-700' : errors.price}
-                    )}
-                    placeholder="Product Price"
-                  />
-                    {errors.price && <p className="text-red-700 text-sm">Price must be greater than zero</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Product Stock
-                  </label>
-                  <input
-                    type="number"
-                    {...register('stock', {
-                      required: true,
-                      min: 1
-                    })}
-                    className={cn(
-                      "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
-                      {'border-red-700' : errors.stock}
-                    )}
-                    placeholder="Stock del producto"
-                  />
-                    {errors.stock && <p className="text-red-700 text-sm">Stock is required</p>}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Product Slug
-                </label>
-                <input
-                  type="text"
-                  {...register('slug', {
-                    required: true,
-                    validate: (value) => !/\s/.test(value) || 'Slug cannot have withe spaces'
-                  })}
-                  className={cn(
-                    "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
-                    {'border-red-700' : errors.slug}
+                <Controller
+                  name="price"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="price">Price ($)</FieldLabel>
+                      <Input
+                        {...field}
+                        id="price"
+                        type="number"
+                        placeholder="Product Price"
+                        value={Number.isNaN(field.value) ? '' : field.value}
+                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
                   )}
-                  placeholder="Product Slug"
                 />
-                  {
-                    errors.slug &&
-                    <p className="text-red-700 text-sm">{errors.slug.message || 'slug is required'}</p>
-                  }
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Product Gender
-                </label>
-                <select
-                  {...register('gender', {
-                    required: true
-                  })}
-                  className={cn(
-                    "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
-                    {'border-red-700' : errors.gender}
+                <Controller
+                  name="stock"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="stock">Product Stock</FieldLabel>
+                      <Input
+                        {...field}
+                        id="stock"
+                        type="number"
+                        placeholder="Stock Available"
+                        value={Number.isNaN(field.value) ? '' : field.value}
+                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
                   )}
-                >
-                  <option value="men">Men</option>
-                  <option value="women">Women</option>
-                  <option value="unisex">Unisex</option>
-                  <option value="kids">Kid</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Product Description
-                </label>
-                <textarea
-                  {...register('description', {
-                    required: true
-                  })}
-                  rows={5}
-                  className={cn(
-                    "w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200",
-                    {'border-red-700' : errors.description}
-                  )}
-                  placeholder="Product Description"
                 />
-                  {errors.description && <p className="text-red-700 text-sm">Description is required</p>}
               </div>
+
+              <Controller
+                name="slug"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="slug">Product Slug</FieldLabel>
+                    <Input
+                      {...field}
+                      id="slug"
+                      type="text"
+                      placeholder="Product Slug"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="gender">Product Gender</FieldLabel>
+                    <Select
+                      items={GENDER_VALUES}
+                      name={field.name}
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
+                    >
+                      <SelectTrigger
+                        id="gender"
+                        aria-invalid={fieldState.invalid}
+                        onBlur={field.onBlur}
+                        className="w-full px-4 py-3 border border-input rounded-lg bg-transparent transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 aria-invalid:border-destructive aria-invalid:ring-destructive/20"
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Gender</SelectLabel>
+                          {GENDER_VALUES.map((gender) =>(
+                            <SelectItem key={gender.value} value={gender.value}>
+                              {gender.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
+              />
+              <Controller
+                name="description"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="description">Product Description</FieldLabel>
+                    <Textarea
+                      {...field}
+                      id="description"
+                      rows={5}
+                      placeholder="Product Description"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
             </div>
           </div>
 
@@ -252,6 +251,7 @@ export const ProductForm = ({ title, subTitle, product, isPosting, onSubmit }: P
                   >
                     {size}
                     <button
+                      type="button"
                       onClick={() => removeSize(size)}
                       className={cn(
                         "cursor-pointer ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200",
@@ -336,135 +336,7 @@ export const ProductForm = ({ title, subTitle, product, isPosting, onSubmit }: P
             </div>
           </div>
         </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Product Images */}
-          <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-            <h2 className="text-xl font-semibold text-slate-800 mb-6">
-              Product Images
-            </h2>
-
-            {/* Drag & Drop Zone */}
-            <div
-              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 ${
-                dragActive
-                  ? 'border-blue-400 bg-blue-50'
-                  : 'border-slate-300 hover:border-slate-400'
-              }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                onChange={handleFileChange}
-              />
-              <div className="space-y-4">
-                <Upload className="mx-auto h-12 w-12 text-slate-400" />
-                <div>
-                  <p className="text-lg font-medium text-slate-700">
-                    Arrastra las imágenes aquí
-                  </p>
-                  <p className="text-sm text-slate-500">
-                    o haz clic para buscar
-                  </p>
-                </div>
-                <p className="text-xs text-slate-400">
-                  PNG, JPG, WebP hasta 10MB cada una
-                </p>
-              </div>
-            </div>
-
-            {/* Current Images */}
-            <div className="mt-6 space-y-3">
-              <h3 className="text-sm font-medium text-slate-700">
-                Current Images
-              </h3>
-              <div className="grid grid-cols-2 gap-3">
-                {product.images.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <div className="aspect-square bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center">
-                      <img
-                        src={image}
-                        alt="Product"
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
-                    <button className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <X className="h-3 w-3" />
-                    </button>
-                    <p className="mt-1 text-xs text-slate-600 truncate">
-                      {image}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Product Status */}
-          <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-            <h2 className="text-xl font-semibold text-slate-800 mb-6">
-              Product Status
-            </h2>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-sm font-medium text-slate-700">
-                  Status
-                </span>
-                <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                  Active
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-sm font-medium text-slate-700">
-                  Inventory
-                </span>
-                <span
-                  className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    currentStock > 5
-                      ? 'bg-green-100 text-green-800'
-                      : currentStock > 0
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}
-                >
-                  {currentStock} -
-                  {currentStock > 5
-                    ? 'On stock'
-                    : currentStock > 0
-                    ? 'Stock Lock'
-                    : 'No Stock!'}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-sm font-medium text-slate-700">
-                  Images
-                </span>
-                <span className="text-sm text-slate-600">
-                  {product.images.length} images
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-sm font-medium text-slate-700">
-                  Available Sizes
-                </span>
-                <span className="text-sm text-slate-600">
-                  {selectedSizes.length} Sizes
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <SideBarProduct product={product}/>
       </div>
     </div>
   </form>
